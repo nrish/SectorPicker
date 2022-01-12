@@ -4,4 +4,3 @@ versions due to changes to a few UI calls.
 
 # Todo
 - Add some balance by limiting the distance of the origin tile to the destination tile
-- make sure resources are taken from

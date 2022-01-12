@@ -41,13 +41,16 @@ task jarAndroid{
 
         def platformRoot = new File("$sdkRoot/platforms/").listFiles().sort().reverse().find{ f -> new File(f, "android.jar").exists()}
 
+        def buildTools = new File("$sdkRoot/build-tools/").listFiles().sort().reverse().find{ f -> new File(f, "d8").exists()}
+        def d8 = new File(buildTools, "d8")
+
         if(!platformRoot) throw new GradleException("No android.jar found. Ensure that you have an Android platform installed.")
 
         //collect dependencies needed for desugaring
         def dependencies = (configurations.compileClasspath.asList() + configurations.runtimeClasspath.asList() + [new File(platformRoot, "android.jar")]).collect{ "--classpath $it.path" }.join(" ")
 
         //dex and desugar files - this requires d8 in your PATH
-        "d8 $dependencies --min-api 14 --output ${project.archivesBaseName}Android.jar ${project.archivesBaseName}Desktop.jar"
+        "$d8 $dependencies --min-api 14 --output ${project.archivesBaseName}Android.jar ${project.archivesBaseName}Desktop.jar"
             .execute(null, new File("$buildDir/libs")).waitForProcessOutput(System.out, System.err)
     }
 }
@@ -69,7 +72,7 @@ jar{
 }
 
 task deploy(type: Jar){
-    //dependsOn jarAndroid
+    dependsOn jarAndroid
     dependsOn jar
     archiveFileName = "${project.archivesBaseName}.jar"
 
@@ -78,7 +81,7 @@ task deploy(type: Jar){
     doLast{
         delete{
             delete "$buildDir/libs/${project.archivesBaseName}Desktop.jar"
-            //delete "$buildDir/libs/${project.archivesBaseName}Android.jar"
+            delete "$buildDir/libs/${project.archivesBaseName}Android.jar"
         }
     }
 }

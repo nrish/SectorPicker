@@ -127,7 +127,7 @@ public class LaunchLoadoutDialogOverride extends LaunchLoadoutDialog {
         buttons.button("Launch from", Icon.terrain, () -> {
             Seq<Sector> capturedSectors = new Seq<>();
             for(Sector s : fromSector.planet.sectors) {
-                if (s.isCaptured()) {
+                if (s.isCaptured() && s.hasBase()) {
                     capturedSectors.add(s);
                 }
             }
