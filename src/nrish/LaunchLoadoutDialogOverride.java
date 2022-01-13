@@ -2,6 +2,7 @@ package nrish;
 
 import arc.Core;
 import arc.func.Cons;
+import arc.math.geom.Vec3;
 import arc.scene.ui.Button;
 import arc.scene.ui.ButtonGroup;
 import arc.scene.ui.Label;
@@ -65,9 +66,7 @@ public class LaunchLoadoutDialogOverride extends LaunchLoadoutDialog {
             universe.getLaunchResources().each(total::add);
             valid = sitems.has(total);
         };
-        Cons<Label> launchLabelBuilder = label -> {
-            label.setText(Core.bundle.format("launch.from", fromSector.name()));
-        };
+        Cons<Label> launchLabelBuilder = label -> label.setText(Core.bundle.format("launch.from", fromSector.name()));
 
         Cons<Table> rebuild = table -> {
             table.clearChildren();
@@ -124,10 +123,14 @@ public class LaunchLoadoutDialogOverride extends LaunchLoadoutDialog {
             ui.hudfrag.showLaunchDirect();
             Time.runTask(launchDuration, () -> control.playSector(fromSector, ui.planet.selected));
         }).disabled(b -> !valid);
-        buttons.button("Launch from", Icon.terrain, () -> {
+        buttons.button("@nrish.launchFrom", Icon.terrain, () -> {
             Seq<Sector> capturedSectors = new Seq<>();
             for(Sector s : fromSector.planet.sectors) {
-                if (s.isCaptured() && s.hasBase()) {
+                //get dist to planet center? See PlanetGrid, as far as I can tell planet grid is centered around 0,0,0
+                var dist = s.tile.v.dst(Vec3.Zero);
+                //allowing player to essentially travel from sectors as long as they are within at least 1 planetary radius away
+                //prevents cross-globe travel
+                if (s.isCaptured() && s.hasBase() && dist < s.tile.v.dst(fromSector.tile.v)) {
                     capturedSectors.add(s);
                 }
             }
@@ -185,9 +188,5 @@ public class LaunchLoadoutDialogOverride extends LaunchLoadoutDialog {
         rebuildLabel.run();
 
         show();
-    }
-
-    public Sector getFromSector(){
-        return fromSector;
     }
 }

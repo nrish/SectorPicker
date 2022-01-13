@@ -1,20 +1,21 @@
 package nrish;
 
-import arc.*;
-import arc.util.*;
-import mindustry.*;
-import mindustry.core.UI;
-import mindustry.game.EventType.*;
-import mindustry.mod.*;
-import mindustry.ui.dialogs.*;
+import arc.Events;
+import arc.util.Log;
+import mindustry.Vars;
+import mindustry.game.EventType.ClientLoadEvent;
+import mindustry.mod.Mod;
+import mindustry.ui.dialogs.PlanetDialog;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 public class SectorPickerMod extends Mod{
-
+    SectorPickerSettingsDialog settingsDialog;
+    PickerSettings settings;
     public SectorPickerMod(){
+        settings = new PickerSettings();
+        settingsDialog = new SectorPickerSettingsDialog(settings);
         //listen for game load event
         Events.on(ClientLoadEvent.class, e -> {
             try {
@@ -32,12 +33,15 @@ public class SectorPickerMod extends Mod{
             } catch (IllegalAccessException ex) {
                 Log.err("can't use reflection to access planet ui!");
             }
+
+            Vars.ui.settings.button("Sector Picker Settings", settingsDialog::showDialog);
         });
     }
 
     @Override
     public void loadContent(){
-        Log.info("Loading some example content.");
+        //TODO read docs and figure out what's supposed to go here
+
     }
 
 }

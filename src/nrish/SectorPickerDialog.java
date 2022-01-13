@@ -11,7 +11,7 @@ import mindustry.ui.dialogs.BaseDialog;
 public class SectorPickerDialog extends BaseDialog {
     Sector targetSector;
     public SectorPickerDialog() {
-        super("Sector Picker");
+        super("@nrish.sectorPickerTitle");
     }
 
     public void show(Seq<Sector> possibleSectors, Sector currentSector, Runnable confirmSector) {
@@ -21,7 +21,7 @@ public class SectorPickerDialog extends BaseDialog {
         addCloseListener();
         targetSector = currentSector;
         ButtonGroup<Button> group = new ButtonGroup<>();
-        cont.add("Sector of origin:");
+        cont.add("@nrish.originSector");
         cont.row();
         cont.pane(t -> {
             int i = 0;
