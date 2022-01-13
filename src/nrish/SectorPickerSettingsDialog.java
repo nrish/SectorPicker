@@ -2,15 +2,18 @@ package nrish;
 
 import arc.scene.ui.CheckBox;
 import arc.scene.ui.Slider;
+import mindustry.Vars;
 import mindustry.gen.Icon;
 import mindustry.ui.dialogs.BaseDialog;
+
+import java.io.IOException;
 
 public class SectorPickerSettingsDialog extends BaseDialog {
     PickerSettings settings;
     Slider distSlider;
     CheckBox enableLimit;
     public SectorPickerSettingsDialog(PickerSettings settings) {
-        super("@nrish.SectorPickerSettingsTitle");
+        super("nrish.SectorPickerSettingsTitle");
         this.settings = settings;
         enableLimit = new CheckBox("@nrish.disableDistCheck");
         distSlider = new Slider(0, 10, 1, false);
@@ -33,7 +36,11 @@ public class SectorPickerSettingsDialog extends BaseDialog {
         buttons.button("@confirm", () ->{
             settings.sectorLimit = distSlider.getValue();
             settings.enableLimit = enableLimit.isChecked();
-            settings.updateSettings();
+            try {
+                settings.updateSettings();
+            } catch (IOException e) {
+                Vars.ui.showErrorMessage("Failed to save sector picker settings");
+            }
         });
     }
 }
