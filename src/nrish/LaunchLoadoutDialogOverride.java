@@ -125,12 +125,14 @@ public class LaunchLoadoutDialogOverride extends LaunchLoadoutDialog {
         }).disabled(b -> !valid);
         buttons.button("@nrish.launchFrom", Icon.terrain, () -> {
             Seq<Sector> capturedSectors = new Seq<>();
+            var target = ui.planet.selected.tile.v;
             for(Sector s : fromSector.planet.sectors) {
-                //get dist to planet center? See PlanetGrid, as far as I can tell planet grid is centered around 0,0,0
-                var dist = s.tile.v.dst(Vec3.Zero);
-                //allowing player to essentially travel from sectors as long as they are within at least 1 planetary radius away
-                //prevents cross-globe travel
-                if (s.isCaptured() && s.hasBase() && dist < s.tile.v.dst(fromSector.tile.v)) {
+                //get distance between tiles
+//                var dist = s.tile.v.dst(ui.planet.selected.tile.v);
+                //now we check if the tile is close enough to launch from
+//                if (s.isCaptured() && s.hasBase() && settings.sectorLimit < dist)
+
+                if (s.isCaptured() && s.hasBase()) {
                     capturedSectors.add(s);
                 }
             }
